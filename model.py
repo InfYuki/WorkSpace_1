@@ -41,7 +41,7 @@ class model(nn.Module):
         super(model, self).__init__()
 
         # 替换LSTM为Transformer
-        self.input_projection = nn.Linear(4, 24)
+        self.input_projection = nn.Linear(8, 24)
         self.positional_encoding = PositionalEncoding(d_model=24)
         self.transformer_encoder_layer = nn.TransformerEncoderLayer(
             d_model=24,

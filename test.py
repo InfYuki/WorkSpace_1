@@ -3,7 +3,7 @@ import numpy as np
 import torch.nn as nn
 from tqdm import tqdm
 from Data_process import  device
-from model import model
+from model2 import model
 from feature_extract.CE import EK_test_tensor
 from feature_extract.Word2vec import w2c_test_tensor
 from feature_extract.token_encoding import K_num_test_tensor

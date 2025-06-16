@@ -3,21 +3,26 @@ import numpy as np
 from transformers import BertModel, BertTokenizer
 from tqdm import tqdm
 import os
+import sys
 from sklearn.preprocessing import StandardScaler
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+# 添加项目根目录到路径
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# 获取项目根目录的路径
+root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 # 加载数据
-train_seq_positive_path = 'data/Dataset_mouse/npy/train_seq_positive.npy'
-train_label_positive_path = 'data/Dataset_mouse/npy/train_label_positive.npy'
-train_seq_negative_path = 'data/Dataset_mouse/npy/train_seq_negative.npy'
-train_label_negative_path = 'data/Dataset_mouse/npy/train_label_negative.npy'
+train_seq_positive_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/train_seq_positive.npy')
+train_seq_negative_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/train_seq_negative.npy')
+train_label_positive_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/train_label_positive.npy')
+train_label_negative_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/train_label_negative.npy')
 
-test_seq_positive_path = 'data/Dataset_mouse/npy/test_seq_positive.npy'
-test_label_positive_path = 'data/Dataset_mouse/npy/test_label_positive.npy'
-test_seq_negative_path = 'data/Dataset_mouse/npy/test_seq_negative.npy'
-test_label_negative_path = 'data/Dataset_mouse/npy/test_label_negative.npy'
-
+test_seq_positive_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/test_seq_positive.npy')
+test_seq_negative_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/test_seq_negative.npy')
+test_label_positive_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/test_label_positive.npy')
+test_label_negative_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/test_label_negative.npy')
 # 设置随机种子
 seed = 42
 torch.manual_seed(seed)
@@ -48,7 +53,7 @@ def dna_to_text(seq):
 
 # 使用transformers的DNABERT或直接用预训练的BERT
 model_name = "zhihan1996/DNA_bert_6"  # 这是一个针对DNA序列的BERT模型
-cache_dir = "feature_extract/bert_model"
+cache_dir = "bert_model"
 
 # 创建缓存目录
 os.makedirs(cache_dir, exist_ok=True)
@@ -61,7 +66,7 @@ bert_model.eval()
 
 
 # 定义获取BERT编码的函数，直接输出固定形状的张量
-def get_bert_embeddings(sequences, seq_length=41, output_dim=4):
+def get_bert_embeddings(sequences, seq_length=41, output_dim=8):
     all_embeddings = []
 
     with torch.no_grad():
