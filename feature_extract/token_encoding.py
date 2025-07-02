@@ -21,46 +21,48 @@ def get_features(seq):
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-''' 训练数据 '''
-train_seq_positive_path = 'data/Dataset_mouse/npy/train_seq_positive.npy'
-train_label_positive_path = 'data/Dataset_mouse/npy/train_label_positive.npy'
-train_seq_negative_path = 'data/Dataset_mouse/npy/train_seq_negative.npy'
-train_label_negative_path = 'data/Dataset_mouse/npy/train_label_negative.npy'
+def K_num_out(dataset_name):
+    if dataset_name == 'Dataset_mouse':
+        ''' 训练数据 '''
+        train_seq_positive_path = 'data/Dataset_mouse/npy/train_seq_positive.npy'
+        train_label_positive_path = 'data/Dataset_mouse/npy/train_label_positive.npy'
+        train_seq_negative_path = 'data/Dataset_mouse/npy/train_seq_negative.npy'
+        train_label_negative_path = 'data/Dataset_mouse/npy/train_label_negative.npy'
+        test_seq_positive_path = 'data/Dataset_mouse/npy/test_seq_positive.npy'
+        test_label_positive_path = 'data/Dataset_mouse/npy/test_label_positive.npy'
+        test_seq_negative_path = 'data/Dataset_mouse/npy/test_seq_negative.npy'
+        test_label_negative_path = 'data/Dataset_mouse/npy/test_label_negative.npy'
 
-seed = 42
-torch.manual_seed(seed)
+    seed = 42
+    torch.manual_seed(seed)
 
-print(device)
+    print(device)
 
-train_pos_sequences = np.load(train_seq_positive_path)
-train_pos_sequences=train_pos_sequences.tolist()
-train_neg_sequences = np.load(train_seq_negative_path)
-train_neg_sequences=train_neg_sequences.tolist()
-train_sequences = np.concatenate([train_pos_sequences,train_neg_sequences ], axis=0)
+    train_pos_sequences = np.load(train_seq_positive_path)
+    train_pos_sequences=train_pos_sequences.tolist()
+    train_neg_sequences = np.load(train_seq_negative_path)
+    train_neg_sequences=train_neg_sequences.tolist()
+    train_sequences = np.concatenate([train_pos_sequences,train_neg_sequences ], axis=0)
 
-test_seq_positive_path = 'data/Dataset_mouse/npy/test_seq_positive.npy'
-test_label_positive_path = 'data/Dataset_mouse/npy/test_label_positive.npy'
-test_seq_negative_path = 'data/Dataset_mouse/npy/test_seq_negative.npy'
-test_label_negative_path = 'data/Dataset_mouse/npy/test_label_negative.npy'
+    #
+    # 序列
+    test_pos_sequences = np.load(test_seq_positive_path)
+    test_pos_sequences=test_pos_sequences.tolist()
+    test_neg_sequences = np.load(test_seq_negative_path)
+    test_neg_sequences=test_neg_sequences.tolist()
+    test_sequences = np.concatenate([test_pos_sequences,test_neg_sequences ], axis=0)
 
-
-#
-# 序列
-test_pos_sequences = np.load(test_seq_positive_path)
-test_pos_sequences=test_pos_sequences.tolist()
-test_neg_sequences = np.load(test_seq_negative_path)
-test_neg_sequences=test_neg_sequences.tolist()
-test_sequences = np.concatenate([test_pos_sequences,test_neg_sequences ], axis=0)
-
-kmer_num=[]
-for seq in train_sequences:
-    kmer_num.append(dna_2mer_encoding(seq))
-kmer_num=np.array(kmer_num)
-K_num_tensor=torch.tensor(kmer_num)
+    kmer_num=[]
+    for seq in train_sequences:
+        kmer_num.append(dna_2mer_encoding(seq))
+    kmer_num=np.array(kmer_num)
+    K_num_tensor=torch.tensor(kmer_num)
 
 
-kmer_num_test=[]
-for seq in test_sequences:
-    kmer_num_test.append(dna_2mer_encoding(seq))
-kmer_num_test=np.array(kmer_num_test)
-K_num_test_tensor=torch.tensor(kmer_num_test)
+    kmer_num_test=[]
+    for seq in test_sequences:
+        kmer_num_test.append(dna_2mer_encoding(seq))
+    kmer_num_test=np.array(kmer_num_test)
+    K_num_test_tensor=torch.tensor(kmer_num_test)
+
+    return K_num_tensor

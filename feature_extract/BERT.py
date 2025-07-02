@@ -13,37 +13,6 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # 获取项目根目录的路径
 root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# 加载数据
-train_seq_positive_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/train_seq_positive.npy')
-train_seq_negative_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/train_seq_negative.npy')
-train_label_positive_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/train_label_positive.npy')
-train_label_negative_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/train_label_negative.npy')
-
-test_seq_positive_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/test_seq_positive.npy')
-test_seq_negative_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/test_seq_negative.npy')
-test_label_positive_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/test_label_positive.npy')
-test_label_negative_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/test_label_negative.npy')
-# 设置随机种子
-seed = 42
-torch.manual_seed(seed)
-np.random.seed(seed)
-
-print(device)
-
-# 加载训练数据
-train_pos_sequences = np.load(train_seq_positive_path)
-train_pos_sequences = train_pos_sequences.tolist()
-train_neg_sequences = np.load(train_seq_negative_path)
-train_neg_sequences = train_neg_sequences.tolist()
-train_sequences = np.concatenate([train_pos_sequences, train_neg_sequences], axis=0)
-
-# 加载测试数据
-test_pos_sequences = np.load(test_seq_positive_path)
-test_pos_sequences = test_pos_sequences.tolist()
-test_neg_sequences = np.load(test_seq_negative_path)
-test_neg_sequences = test_neg_sequences.tolist()
-test_sequences = np.concatenate([test_pos_sequences, test_neg_sequences], axis=0)
-
 
 # 定义一个将DNA序列转为BERT可接受的字符串的函数
 def dna_to_text(seq):
@@ -112,29 +81,64 @@ def get_bert_embeddings(sequences, seq_length=41, output_dim=8):
 
     return np.array(all_embeddings)
 
+def Bert_out(dataset_name):
+    # 加载数据
+    if dataset_name == "Dataset_mouse":
+        train_seq_positive_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/train_seq_positive.npy')
+        train_seq_negative_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/train_seq_negative.npy')
+        train_label_positive_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/train_label_positive.npy')
+        train_label_negative_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/train_label_negative.npy')
 
-# 使用BERT获取训练集和测试集的编码
-print("Encoding training sequences...")
-train_embeddings = get_bert_embeddings(train_sequences)
-print("Encoding test sequences...")
-test_embeddings = get_bert_embeddings(test_sequences)
+        test_seq_positive_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/test_seq_positive.npy')
+        test_seq_negative_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/test_seq_negative.npy')
+        test_label_positive_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/test_label_positive.npy')
+        test_label_negative_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/test_label_negative.npy')
 
-# 此时train_embeddings和test_embeddings的形状应该是 [样本数, 41, 4]
-print("Train embeddings shape:", train_embeddings.shape)
-print("Test embeddings shape:", test_embeddings.shape)
+    # 设置随机种子
+    seed = 42
+    torch.manual_seed(seed)
+    np.random.seed(seed)
 
-# 标准化
-sc = StandardScaler()
-train_flat = train_embeddings.reshape(train_embeddings.shape[0], -1)
-test_flat = test_embeddings.reshape(test_embeddings.shape[0], -1)
+    print(device)
 
-sc.fit(train_flat)
-train_flat = sc.transform(train_flat)
-test_flat = sc.transform(test_flat)
+    # 加载训练数据
+    train_pos_sequences = np.load(train_seq_positive_path)
+    train_pos_sequences = train_pos_sequences.tolist()
+    train_neg_sequences = np.load(train_seq_negative_path)
+    train_neg_sequences = train_neg_sequences.tolist()
+    train_sequences = np.concatenate([train_pos_sequences, train_neg_sequences], axis=0)
 
-# 重塑回[样本数, 41, 4]
-bert_tensor = torch.tensor(train_flat.reshape(train_embeddings.shape), dtype=torch.float)
-bert_test_tensor = torch.tensor(test_flat.reshape(test_embeddings.shape), dtype=torch.float)
+    # 加载测试数据
+    test_pos_sequences = np.load(test_seq_positive_path)
+    test_pos_sequences = test_pos_sequences.tolist()
+    test_neg_sequences = np.load(test_seq_negative_path)
+    test_neg_sequences = test_neg_sequences.tolist()
+    test_sequences = np.concatenate([test_pos_sequences, test_neg_sequences], axis=0)
 
-print("BERT embeddings final shape:", bert_tensor.shape)
-print("BERT test embeddings final shape:", bert_test_tensor.shape)
+    # 使用BERT获取训练集和测试集的编码
+    print("Encoding training sequences...")
+    train_embeddings = get_bert_embeddings(train_sequences)
+    print("Encoding test sequences...")
+    test_embeddings = get_bert_embeddings(test_sequences)
+
+    # 此时train_embeddings和test_embeddings的形状应该是 [样本数, 41, 4]
+    print("Train embeddings shape:", train_embeddings.shape)
+    print("Test embeddings shape:", test_embeddings.shape)
+
+    # 标准化
+    sc = StandardScaler()
+    train_flat = train_embeddings.reshape(train_embeddings.shape[0], -1)
+    test_flat = test_embeddings.reshape(test_embeddings.shape[0], -1)
+
+    sc.fit(train_flat)
+    train_flat = sc.transform(train_flat)
+    test_flat = sc.transform(test_flat)
+
+    # 重塑回[样本数, 41, 4]
+    bert_tensor = torch.tensor(train_flat.reshape(train_embeddings.shape), dtype=torch.float)
+    bert_test_tensor = torch.tensor(test_flat.reshape(test_embeddings.shape), dtype=torch.float)
+
+    print("BERT embeddings final shape:", bert_tensor.shape)
+    print("BERT test embeddings final shape:", bert_test_tensor.shape)
+
+    return bert_tensor

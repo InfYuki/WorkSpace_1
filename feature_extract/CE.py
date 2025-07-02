@@ -2,12 +2,20 @@ import pandas as pd
 import torch
 import numpy as np
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+import os
+import sys
+
+# 添加项目根目录到路径
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# 获取项目根目录的路径
+root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 
 ''' 训练数据 '''
-train_seq_positive_path = 'data/Dataset_mouse/npy/train_seq_positive.npy'
-train_label_positive_path = 'data/Dataset_mouse/npy/train_label_positive.npy'
-train_seq_negative_path = 'data/Dataset_mouse/npy/train_seq_negative.npy'
-train_label_negative_path = 'data/Dataset_mouse/npy/train_label_negative.npy'
+train_seq_positive_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/train_seq_positive.npy')
+train_seq_negative_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/train_seq_negative.npy')
+train_label_positive_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/train_label_positive.npy')
+train_label_negative_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/train_label_negative.npy')
 
 seed = 42
 torch.manual_seed(seed)
@@ -28,10 +36,10 @@ train_sequences = np.concatenate([train_pos_sequences,train_neg_sequences ], axi
 train_label_positive=np.load(train_label_positive_path)
 train_label_negative=np.load(train_label_negative_path)
 
-test_seq_positive_path = 'data/Dataset_mouse/npy/test_seq_positive.npy'
-test_label_positive_path = 'data/Dataset_mouse/npy/test_label_positive.npy'
-test_seq_negative_path = 'data/Dataset_mouse/npy/test_seq_negative.npy'
-test_label_negative_path = 'data/Dataset_mouse/npy/test_label_negative.npy'
+test_seq_positive_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/test_seq_positive.npy')
+test_seq_negative_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/test_seq_negative.npy')
+test_label_positive_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/test_label_positive.npy')
+test_label_negative_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/test_label_negative.npy')
 
 # 序列
 test_pos_sequences = np.load(test_seq_positive_path)
@@ -81,5 +89,6 @@ data_test_EK=np.array(data_test_EK)
 EK_tensor= torch.tensor(data_EK, dtype=torch.float)
 EK_test_tensor= torch.tensor(data_test_EK, dtype=torch.float)
 
-
+print(EK_tensor)
+print(EK_tensor.size())
 

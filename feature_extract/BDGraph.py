@@ -207,7 +207,7 @@ def build_dna_pyg_graph(sequence):
 
 
 # 从数据集加载序列并处理
-def load_and_process_for_gnn():
+def load_and_process_for_gnn(dataset_name):
     """加载数据并处理为GNN可用的格式"""
     global global_pca
 
@@ -215,10 +215,11 @@ def load_and_process_for_gnn():
     root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
     # 训练数据
-    train_seq_positive_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/train_seq_positive.npy')
-    train_seq_negative_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/train_seq_negative.npy')
-    train_label_positive_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/train_label_positive.npy')
-    train_label_negative_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/train_label_negative.npy')
+    if dataset_name == 'Dataset_mouse':
+        train_seq_positive_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/train_seq_positive.npy')
+        train_seq_negative_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/train_seq_negative.npy')
+        train_label_positive_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/train_label_positive.npy')
+        train_label_negative_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/train_label_negative.npy')
 
     print(f"加载训练数据: {train_seq_positive_path}")
 
@@ -238,10 +239,11 @@ def load_and_process_for_gnn():
     train_dataset = DNAGraphDataset(train_sequences, train_labels)
 
     # 测试数据
-    test_seq_positive_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/test_seq_positive.npy')
-    test_seq_negative_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/test_seq_negative.npy')
-    test_label_positive_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/test_label_positive.npy')
-    test_label_negative_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/test_label_negative.npy')
+    if dataset_name == 'Dataset_mouse':
+        test_seq_positive_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/test_seq_positive.npy')
+        test_seq_negative_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/test_seq_negative.npy')
+        test_label_positive_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/test_label_positive.npy')
+        test_label_negative_path = os.path.join(root_dir, 'data/Dataset_mouse/npy/test_label_negative.npy')
 
     print(f"加载测试数据: {test_seq_positive_path}")
 
@@ -488,9 +490,9 @@ if __name__ == "__main__":
 BDGraph_train_dataset, BDGraph_test_dataset = None, None
 
 
-def get_graph_datasets():
+def get_graph_datasets(dataset_name):
     """获取图数据集，懒加载方式"""
     global BDGraph_train_dataset, BDGraph_test_dataset
     if BDGraph_train_dataset is None or BDGraph_test_dataset is None:
-        BDGraph_train_dataset, BDGraph_test_dataset = load_and_process_for_gnn()
+        BDGraph_train_dataset, BDGraph_test_dataset = load_and_process_for_gnn(dataset_name)
     return BDGraph_train_dataset, BDGraph_test_dataset
