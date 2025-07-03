@@ -237,6 +237,6 @@ def Bio_feature_out(dataset_name):
     print(EK_tensor)
     print(EK_tensor.size())
 
-    return EK_tensor
+    return EK_tensor,EK_test_tensor
 
 #Bio_feature_out('Dataset_mouse')

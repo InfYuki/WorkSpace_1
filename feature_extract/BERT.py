@@ -141,4 +141,4 @@ def Bert_out(dataset_name):
     print("BERT embeddings final shape:", bert_tensor.shape)
     print("BERT test embeddings final shape:", bert_test_tensor.shape)
 
-    return bert_tensor
+    return bert_tensor,bert_test_tensor
