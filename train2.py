@@ -197,9 +197,6 @@ def main_worker(args):
             print("vail_score:", vail_score)
             print('\n')
 
-            if vail_score > best_score:
-                best_score = vail_score
-                best_model_state_dict = model3.state_dict()
 
             all_val_score.append(vail_score)
             all_val_loss.append(val_loss)
@@ -209,6 +206,7 @@ def main_worker(args):
                 best_score = vail_score
                 best_epoch = epoch + 1
                 best_model_state_dict = model3.state_dict()
+                torch.save(best_model_state_dict, "model_save.pth")
                 counter = 0  # 重置计数器
             else:
                 counter += 1  # 增加计数器
@@ -231,7 +229,7 @@ def main_worker(args):
             print(f"Training completed for all {args.epoch} epochs.")
         print(f"Best validation score: {best_score} at epoch {best_epoch}")
 
-    torch.save(best_model_state_dict, "model_save.pth")
+    #torch.save(best_model_state_dict, "model_save.pth")
 
 
 if __name__ == '__main__':
@@ -241,7 +239,7 @@ if __name__ == '__main__':
     parser.add_argument('--runs', type=int, default=10) #5 for penn
     parser.add_argument('--dataset', default='Dataset_mouse')
     parser.add_argument('--epoch', type=int, default=300)
-    parser.add_argument('--KFold', type=int, default=2)
+    parser.add_argument('--KFold', type=int, default=4)
     parser.add_argument('--batch_size', type=int, default=128)
     # 创建模型
     #model3 = model(out_channels=16, kernel_size=3, stride=1, hidden_size=12).to(device)
@@ -257,7 +255,7 @@ if __name__ == '__main__':
     parser.add_argument('--gamma', type=int, default=0.5)
 
     # 早停参数
-    parser.add_argument('--patience', type=int, default=50)            # 添加早停耐心参数
+    parser.add_argument('--patience', type=int, default=80)            # 添加早停耐心参数
 
 
     args = parser.parse_args()

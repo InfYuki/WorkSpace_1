@@ -4,22 +4,27 @@ from tqdm import tqdm
 from model2 import model
 from utils import cal_score, Model_Evaluate
 from Data_process import device
-from feature_extract.BERT import bert_test_tensor
-from feature_extract.token_encoding import K_num_test_tensor
+#from feature_extract.BERT import bert_test_tensor
+#from feature_extract.token_encoding import K_num_test_tensor
 from feature_extract.BDGraph import get_graph_datasets
+
+from feature_extract.BERT import Bert_out
+from feature_extract.Bio_feature import Bio_feature_out
+
 from torch_geometric.data import DataLoader
 import warnings
+import argparse
 
 warnings.filterwarnings('ignore')
 
 
-def test():
+def test(args):
     # 加载测试数据
-    x1_test = bert_test_tensor  # BERT特征作为x1
-    x3_test = K_num_test_tensor  # K-mer编码作为x3
+    _, x1_test = Bert_out('Dataset_mouse')  # BERT特征作为x1
+    _, x3_test = Bio_feature_out('Dataset_mouse')  # Bio_feature
 
     # 加载图数据
-    _, test_graph_dataset = get_graph_datasets()
+    _, test_graph_dataset = get_graph_datasets('Dataset_mouse')
 
     # 加载标签
     test_label_positive_path = 'data/Dataset_mouse/npy/test_label_positive.npy'
@@ -50,7 +55,10 @@ def test():
     model_state_dict = torch.load(model_path)
 
     # 初始化模型
-    test_model = model(out_channels=16, kernel_size=3, stride=1, hidden_size=12).to(device)
+    #test_model = model(out_channels=16, kernel_size=3, stride=1, hidden_size=12).to(device)
+    test_model = model(out_channels=args.out_channels, kernel_size=args.kernel_size, stride=args.stride,
+                   hidden_size=args.hidden_size).to(device)
+
     test_model.load_state_dict(model_state_dict)
     test_model.eval()
 
@@ -88,5 +96,20 @@ def test():
     return acc
 
 
-if __name__ == "__main__":
-    test()
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--dataset', default='Dataset_mouse')
+
+    parser.add_argument('--batch_size', type=int, default=128)
+    # 创建模型
+    #model3 = model(out_channels=16, kernel_size=3, stride=1, hidden_size=12).to(device)
+    parser.add_argument('--out_channels', type=int, default=16)
+    parser.add_argument('--kernel_size', type=int, default=3)
+    parser.add_argument('--stride', type=int, default=1)
+    parser.add_argument('--hidden_size', type=int, default=12)
+
+
+
+    args = parser.parse_args()
+
+    test(args)
